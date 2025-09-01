@@ -4,3 +4,4 @@ public struct RotationSpeed : IComponentData
 {
     public float Value;
 }
+

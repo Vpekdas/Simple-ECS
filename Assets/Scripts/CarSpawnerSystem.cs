@@ -31,16 +31,21 @@ public partial class CarSpawnerSystem : SystemBase
             int colorIndex = random.NextInt(0, colors.Length);
             float4 color = colors[colorIndex].Value;
 
-            ecb.SetComponent(car, new LocalTransform
+            DynamicBuffer<CircuitPoint> circuit = SystemAPI.GetBuffer<CircuitPoint>(entity);
+            if (circuit.Length > 0)
             {
-                Position = new float3(0, 0, 0),
-                Rotation = quaternion.identity,
-                Scale = 1f
-            });
-
+                ecb.SetComponent(car, new LocalTransform
+                {
+                    Position = circuit[0].Position,
+                    Rotation = quaternion.identity,
+                    Scale = 1f
+                });
+            }
             ecb.AddComponent(car, new MoveSpeed { Value = spawner.MoveSpeed });
             ecb.AddComponent(car, new RotationSpeed { Value = spawner.RotationSpeed });
             ecb.AddComponent(car, new URPMaterialPropertyBaseColor { Value = color });
+            ecb.AddComponent(car, new CurrentTargetIndex { Value = 0 });
+            ecb.AddComponent(car, new RouteReference { CircuitEntity = spawner.CircuitEntity });
 
             ecb.RemoveComponent<CarSpawner>(entity);
         }

@@ -3,7 +3,8 @@ using UnityEngine;
 public class CarSpawnerAuthoring : MonoBehaviour
 {
     public GameObject CarPrefab;
-    public float MoveSpeed = 5f;
-    public float RotationSpeed = 90f;
+    public GameObject CircuitParent;
+    public float MoveSpeed = 10f;
+    public float RotationSpeed = 5f;
     public Color[] ColorPicker;
 }

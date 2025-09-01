@@ -16,7 +16,6 @@ Etape 3:
 - Les routes sont configurables dans la scene
 - Chaque spawner a une route affectée et la voiture spawn doit la parcourir et disparaître à la fin
 
-
 Le test est à remettre à mon adresse email au plus tard le 08/07/2025 à 23:59.
 Il sera apprécier si vous avez un petit document pour expliquer vos choix et réflexions.
 
