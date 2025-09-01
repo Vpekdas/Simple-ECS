@@ -1,0 +1,105 @@
+# Unity-focused .editorconfig
+root = true
+
+# Applies to all files
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = tab
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+max_line_length = 120
+
+# Applies only to C# scripts
+[*.cs]
+
+# Brace style – Allman (Unity standard)
+csharp_new_line_before_open_brace = all
+
+# Prefer explicit types for clarity
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = false:suggestion
+csharp_style_var_elsewhere = false:suggestion
+
+# Expression-bodied members – only for simple properties
+csharp_style_expression_bodied_methods = false:suggestion
+csharp_style_expression_bodied_properties = true:suggestion
+
+# Avoid unnecessary `this.` qualifier
+dotnet_style_qualification_for_field = false:suggestion
+dotnet_style_qualification_for_property = false:suggestion
+dotnet_style_qualification_for_method = false:suggestion
+dotnet_style_qualification_for_event = false:suggestion
+
+# Namespace declaration style – block scoped
+csharp_style_namespace_declarations = block_scoped:suggestion
+
+###############
+# Naming Rules
+###############
+
+# Public fields (Inspector-exposed) – PascalCase
+dotnet_naming_rule.public_fields_should_be_pascal.symbols = public_fields
+dotnet_naming_rule.public_fields_should_be_pascal.style = pascal_case
+dotnet_naming_rule.public_fields_should_be_pascal.severity = warning
+
+dotnet_naming_symbols.public_fields.applicable_kinds = field
+dotnet_naming_symbols.public_fields.applicable_accessibilities = public
+dotnet_naming_style.pascal_case.capitalization = PascalCase
+
+# All private fields – _camelCase (includes [SerializeField] fields)
+dotnet_naming_rule.private_fields_should_be_camelcase.symbols = private_fields
+dotnet_naming_rule.private_fields_should_be_camelcase.style = camel_with_underscore
+dotnet_naming_rule.private_fields_should_be_camelcase.severity = warning
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.camel_with_underscore.required_prefix = _
+dotnet_naming_style.camel_with_underscore.capitalization = camel_case
+
+# Interfaces – PascalCase with 'I' prefix
+dotnet_naming_rule.interfaces_should_start_with_i.symbols = interfaces
+dotnet_naming_rule.interfaces_should_start_with_i.style = interface_prefix_i
+dotnet_naming_rule.interfaces_should_start_with_i.severity = warning
+
+dotnet_naming_symbols.interfaces.applicable_kinds = interface
+dotnet_naming_style.interface_prefix_i.capitalization = PascalCase
+dotnet_naming_style.interface_prefix_i.required_prefix = I
+
+# Methods – PascalCase
+dotnet_naming_rule.methods_should_be_pascal.symbols = methods
+dotnet_naming_rule.methods_should_be_pascal.style = pascal_case
+dotnet_naming_rule.methods_should_be_pascal.severity = warning
+
+dotnet_naming_symbols.methods.applicable_kinds = method
+
+# Method parameters – camelCase
+dotnet_naming_rule.parameters_should_be_camelcase.symbols = parameters
+dotnet_naming_rule.parameters_should_be_camelcase.style = camelcase
+dotnet_naming_rule.parameters_should_be_camelcase.severity = warning
+
+dotnet_naming_symbols.parameters.applicable_kinds = parameter
+dotnet_naming_style.camel_case.capitalization = camelCase
+
+# Constants – ALL_CAPS
+dotnet_naming_rule.constants_should_be_all_caps.symbols = constants
+dotnet_naming_rule.constants_should_be_all_caps.style = all_caps
+dotnet_naming_rule.constants_should_be_all_caps.severity = warning
+
+dotnet_naming_symbols.constants.applicable_kinds = field
+dotnet_naming_symbols.constants.required_modifiers = const
+
+dotnet_naming_style.all_caps.capitalization = all_upper
+dotnet_naming_style.all_caps.word_separator = _
+
+# Static fields – s_camelCase (optional Unity style)
+dotnet_naming_rule.static_fields_should_be_s_camel.symbols = static_fields
+dotnet_naming_rule.static_fields_should_be_s_camel.style = s_camel
+dotnet_naming_rule.static_fields_should_be_s_camel.severity = warning
+
+dotnet_naming_symbols.static_fields.applicable_kinds = field
+dotnet_naming_symbols.static_fields.required_modifiers = static
+dotnet_naming_style.s_camel.required_prefix = s_
+dotnet_naming_style.s_camel.capitalization = camelcase
