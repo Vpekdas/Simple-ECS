@@ -6,4 +6,5 @@ public class CarSpawnerAuthoring : MonoBehaviour
     public GameObject CircuitParent;
     public float MoveSpeed;
     public Color[] ColorPicker;
+    public float SpawnInterval;
 }

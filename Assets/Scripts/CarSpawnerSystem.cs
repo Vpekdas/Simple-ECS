@@ -9,51 +9,52 @@ using UnityEngine;
 [BurstCompile]
 public partial class CarSpawnerSystem : SystemBase
 {
-
-    // Run only if there is a CarSpawner.
     protected override void OnCreate()
     {
         RequireForUpdate<CarSpawner>();
     }
 
-    protected override void OnStartRunning()
+    protected override void OnUpdate()
     {
+        float deltaTime = SystemAPI.Time.DeltaTime;
         EntityCommandBuffer ecb = new(Allocator.Temp);
 
         uint seed = (uint)System.DateTime.Now.Ticks;
         Unity.Mathematics.Random random = new(seed);
 
-        foreach ((CarSpawner spawner, DynamicBuffer<ColorBufferElement> colors, Entity entity)
-                   in SystemAPI.Query<CarSpawner, DynamicBuffer<ColorBufferElement>>().WithEntityAccess())
+        foreach (
+            (RefRW<CarSpawner> spawner, DynamicBuffer<ColorBufferElement> colors, Entity entity)
+            in SystemAPI.Query<RefRW<CarSpawner>, DynamicBuffer<ColorBufferElement>>().WithEntityAccess()
+        )
         {
-            Entity car = ecb.Instantiate(spawner.Prefab);
+            spawner.ValueRW.SpawnTimer += deltaTime;
 
-            int colorIndex = random.NextInt(0, colors.Length);
-            float4 color = colors[colorIndex].Value;
-
-            DynamicBuffer<CircuitPoint> circuit = SystemAPI.GetBuffer<CircuitPoint>(entity);
-            if (circuit.Length > 0)
+            if (spawner.ValueRW.SpawnTimer >= spawner.ValueRO.SpawnInterval)
             {
-                ecb.SetComponent(car, new LocalTransform
-                {
-                    Position = circuit[0].Position,
-                    Rotation = quaternion.identity,
-                    Scale = 1f
-                });
-            }
-            ecb.AddComponent(car, new MoveSpeed { Value = spawner.MoveSpeed });
-            ecb.AddComponent(car, new URPMaterialPropertyBaseColor { Value = color });
-            ecb.AddComponent(car, new CurrentTargetIndex { Value = 0 });
-            ecb.AddComponent(car, new RouteReference { CircuitEntity = spawner.CircuitEntity });
+                spawner.ValueRW.SpawnTimer = 0f; 
 
-            // Since i'm spawning only one car per circuit, i do not need the spawner anymore.
-            ecb.RemoveComponent<CarSpawner>(entity);
+                Entity car = ecb.Instantiate(spawner.ValueRO.Prefab);
+                int colorIndex = random.NextInt(0, colors.Length);
+                float4 color = colors[colorIndex].Value;
+
+                DynamicBuffer<CircuitPoint> circuit = SystemAPI.GetBuffer<CircuitPoint>(entity);
+                if (circuit.Length > 0)
+                {
+                    ecb.SetComponent(car, new LocalTransform
+                    {
+                        Position = circuit[0].Position,
+                        Rotation = quaternion.identity,
+                        Scale = 1f
+                    });
+                }
+                ecb.AddComponent(car, new MoveSpeed { Value = spawner.ValueRO.MoveSpeed });
+                ecb.AddComponent(car, new URPMaterialPropertyBaseColor { Value = color });
+                ecb.AddComponent(car, new CurrentTargetIndex { Value = 0 });
+                ecb.AddComponent(car, new RouteReference { CircuitEntity = spawner.ValueRO.CircuitEntity });
+            }
         }
 
-        // Execute all queued entity commands.
         ecb.Playback(EntityManager);
-
-        // Free the memory.
         ecb.Dispose();
     }
 
@@ -62,5 +63,4 @@ public partial class CarSpawnerSystem : SystemBase
     {
         Debug.Log(color);
     }
-    protected override void OnUpdate() { }
 }
