@@ -15,7 +15,6 @@ public class CarSpawnerBaker : Baker<CarSpawnerAuthoring>
             Prefab = GetEntity(authoring.CarPrefab, TransformUsageFlags.Dynamic),
             CircuitEntity = entity,
             MoveSpeed = authoring.MoveSpeed,
-            RotationSpeed = authoring.RotationSpeed
         });
 
         // UnityEngine.Color cannot be stored in ECS data. We convert each color to float4 (RGBA).

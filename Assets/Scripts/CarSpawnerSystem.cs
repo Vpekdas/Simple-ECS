@@ -42,7 +42,6 @@ public partial class CarSpawnerSystem : SystemBase
                 });
             }
             ecb.AddComponent(car, new MoveSpeed { Value = spawner.MoveSpeed });
-            ecb.AddComponent(car, new RotationSpeed { Value = spawner.RotationSpeed });
             ecb.AddComponent(car, new URPMaterialPropertyBaseColor { Value = color });
             ecb.AddComponent(car, new CurrentTargetIndex { Value = 0 });
             ecb.AddComponent(car, new RouteReference { CircuitEntity = spawner.CircuitEntity });

@@ -21,7 +21,6 @@ public partial class CarMovementSystem : SystemBase
             .ForEach((Entity entity, int entityInQueryIndex, ref LocalTransform transform,
                       ref CurrentTargetIndex targetIndex,
                       in MoveSpeed moveSpeed,
-                      in RotationSpeed rotationSpeed,
                       in RouteReference routeRef) =>
             {
                 if (!circuitPointLookup.HasBuffer(routeRef.CircuitEntity))
@@ -43,7 +42,7 @@ public partial class CarMovementSystem : SystemBase
 
                 if (distance < 0.1f)
                 {
-                    if (currentIndex == route.Length - 1)
+                    if (currentIndex >= route.Length - 1)
                     {
                         ecb.DestroyEntity(entityInQueryIndex, entity);
                         return;
