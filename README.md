@@ -20,6 +20,8 @@ This prototype is an initial exploration into ECS (Entity Component System) and 
 
 The goal of this project is to allow users to design a circuit and assign it to a car spawner. Spawned cars will then follow the defined circuit until they reach the end.
 
+I chose to implement this project using Unity’s latest recommendations, as some older methods are deprecated or scheduled for deprecation. One of the key limitations of traditional Unity OOP is its reliance on a single-threaded architecture. To overcome this, I leveraged Unity's ECS (Entity Component System) and ScheduleParallel, which allows tasks to run across multiple threads for improving performance and scalability.
+
 ## Controls
 
 Left click to place a circuit on editor.
