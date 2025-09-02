@@ -2,6 +2,7 @@ using Unity.Entities;
 using Unity.Transforms;
 using Unity.Mathematics;
 using Unity.Burst;
+using Unity.Jobs;
 
 [BurstCompile]
 public partial class CarMovementSystem : SystemBase
@@ -9,13 +10,15 @@ public partial class CarMovementSystem : SystemBase
     protected override void OnUpdate()
     {
         float deltaTime = SystemAPI.Time.DeltaTime;
-
         BufferLookup<CircuitPoint> circuitPointLookup = GetBufferLookup<CircuitPoint>(true);
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
 
-        Entities
+        // Since i'm running on multiple threads, we need to use a command buffer that fits with multithreading.
+        EndSimulationEntityCommandBufferSystem ecbSystem = World.GetOrCreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
+        EntityCommandBuffer.ParallelWriter ecb = ecbSystem.CreateCommandBuffer().AsParallelWriter();
+
+        JobHandle jobHandle = Entities
             .WithReadOnly(circuitPointLookup)
-            .ForEach((Entity entity, ref LocalTransform transform,
+            .ForEach((Entity entity, int entityInQueryIndex, ref LocalTransform transform,
                       ref CurrentTargetIndex targetIndex,
                       in MoveSpeed moveSpeed,
                       in RotationSpeed rotationSpeed,
@@ -27,7 +30,6 @@ public partial class CarMovementSystem : SystemBase
                 }
 
                 DynamicBuffer<CircuitPoint> route = circuitPointLookup[routeRef.CircuitEntity];
-
                 if (route.Length == 0)
                 {
                     return;
@@ -43,7 +45,7 @@ public partial class CarMovementSystem : SystemBase
                 {
                     if (currentIndex == route.Length - 1)
                     {
-                        ecb.DestroyEntity(entity);
+                        ecb.DestroyEntity(entityInQueryIndex, entity);
                         return;
                     }
 
@@ -57,9 +59,12 @@ public partial class CarMovementSystem : SystemBase
                 float3 forward = math.forward(transform.Rotation);
                 transform.Position += deltaTime * moveSpeed.Value * forward;
 
-            }).Run();
+            }).ScheduleParallel(Dependency);
 
-        ecb.Playback(EntityManager);
-        ecb.Dispose();
+        // Register the job with the ECB system to ensure playback occurs after the job completes.
+        ecbSystem.AddJobHandleForProducer(jobHandle);
+
+        // Update the system's dependency to include our scheduled job.
+        Dependency = jobHandle;
     }
 }

@@ -47,6 +47,7 @@ public partial class CarSpawnerSystem : SystemBase
             ecb.AddComponent(car, new CurrentTargetIndex { Value = 0 });
             ecb.AddComponent(car, new RouteReference { CircuitEntity = spawner.CircuitEntity });
 
+            // Since i'm spawning only one car per circuit, i do not need the spawner anymore.
             ecb.RemoveComponent<CarSpawner>(entity);
         }
 

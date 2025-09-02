@@ -45,7 +45,7 @@ public class LevelEditor : MonoBehaviour
             Handles.color = _canPlace ? Color.green : Color.red;
             Handles.DrawWireCube(_previewPosition, new Vector3(10, 2, 10));
 
-            if (e.type == EventType.MouseDown && e.button == 0 && _canPlace && Circuit != null)
+            if (e.type == EventType.MouseDown && e.button == 0 && _canPlace)
             {
                 GameObject newObj = (GameObject)PrefabUtility.InstantiatePrefab(Circuit);
                 Undo.RegisterCreatedObjectUndo(newObj, "Place Object");
